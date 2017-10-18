@@ -12,26 +12,37 @@ class MainViewController: UIViewController {
     
     @IBOutlet weak var newsTableView: UITableView!
     var mainVM: MainViewModel?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         mainVM = MainViewModel()
-        mainVM?.fetchnews{  isSuccess, error in
+        fetchNews()
+    }
+    
+    private func fetchNews() {
+        mainVM?.fetchnews{ [weak self]  isSuccess, error in
             if(isSuccess) {
                 print("success")
                 DispatchQueue.main.async {
-                    self.newsTableView.reloadData()
+                    self?.newsTableView.reloadData()
                 }
             } else {
-                print("failure")
+                self?.showAlert(message: error)
             }
         }
+    }
+    
+    private func showAlert(message: String) {
+        let errorAlert = UIAlertController(title: "Error", message: message , preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "ok", style: .default)
+        errorAlert.addAction(okAction)
+        self.present(errorAlert, animated: true)
     }
 }
 
 
 extension MainViewController: UITableViewDataSource {
-
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -41,14 +52,11 @@ extension MainViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let headerCell = tableView.dequeueReusableCell(withIdentifier: "\(CategoryTableViewCell.self)") as! CategoryTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "\(CategoryTableViewCell.self)") as! CategoryTableViewCell
+        cell.selectionStyle = .none
         let category = mainVM?.categories[indexPath.row]
-//        mainVM?.loadImage(imageUrlString: category?.imageUrl ?? "", completion: { [weak self] isLoaded in
-//            DispatchQueue.main.async {
-        headerCell.configureCell(imageUrl: category?.imageUrl ?? "", name: category?.categoryName ?? "")
-//            }
-//        })
-        return headerCell
+        cell.configureCell(imageUrl: category?.imageUrl ?? "", name: category?.categoryName ?? "")
+        return cell
     }
 }
 

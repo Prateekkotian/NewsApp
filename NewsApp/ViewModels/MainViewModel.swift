@@ -14,8 +14,7 @@ class MainViewModel {
     var subCategories: [SubCategoryModel] = []
     var image: UIImage?
     
-    public init() {
-    }
+    public init() {}
     
     func fetchnews(completion: @escaping (_ isSucees: Bool, _ error: String) -> Void) {
         guard let url = URL(string: "https://s3.amazonaws.com/recruiting-test/ios/category.json") else { return }
@@ -36,29 +35,12 @@ class MainViewModel {
                         self?.categories.append(category)
                     }
                     completion(true, "")
-                    
                 } catch {
                     print("error, while trying to convert data to JSON")
                     return
                 }
-                
             }
         })
         task.resume()
-        
-    }
-    
-    func loadImage(imageUrlString: String, completion: @escaping (_ isLoaded: Bool) -> Void) {
-        guard let imageUrl = URL(string: imageUrlString) else { return }
-        
-        let request = URLRequest(url: imageUrl, cachePolicy: .returnCacheDataElseLoad, timeoutInterval: TimeInterval(20))
-        let urlSession = URLSession.shared
-        urlSession.dataTask(with: request) { [weak self]  (responseData, urlResponse, _) in
-            guard urlResponse != nil, let imageData = responseData else {
-                return
-            }
-            self?.image = UIImage(data: imageData)
-            completion(true)
-            }.resume()
     }
 }

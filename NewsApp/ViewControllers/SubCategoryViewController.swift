@@ -29,6 +29,7 @@ extension SubCategoryViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "\(SubCategoryTableViewCell.self)", for: indexPath) as! SubCategoryTableViewCell
+        cell.selectionStyle = .none
         let subCategory = subCategories[indexPath.row]
         cell.configureCell(name: subCategory.subCategoryName, imageUrl: subCategory.imageUrl, description: subCategory.subCategoryDescription)
         return cell
